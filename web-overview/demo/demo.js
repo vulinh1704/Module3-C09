@@ -11,8 +11,7 @@ const server = http.createServer(function (req, res) { // cú pháp tạo server
     } else {
         let data = '';
         req.on('data', chunk => {
-            data += chunk;
-            console.log(data)
+            data += chunk; //name=linh&age=10
         }) // lấy dữ liệu từ form
         req.on('end', () => {
             const userInfo = qs.parse(data); // dịch data từ chuỗi ra đối tượng chứa các thông tin nhập vào
