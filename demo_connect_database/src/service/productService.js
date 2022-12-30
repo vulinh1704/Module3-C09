@@ -5,7 +5,7 @@ class ProductService {
     findAll() {
         let connect = connection.getConnection();
         return new Promise((resolve, reject) => {
-            connect.query('select * from product', (err, products) => {
+            connect.query('select * from product p join category c on p.idCategory = c.idCategory', (err, products) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -18,9 +18,9 @@ class ProductService {
     save(product) {
         let connect = connection.getConnection();
         return new Promise((resolve, reject) => {
-            connect.query(`insert into manager.product(price, name, description, image)
+            connect.query(`insert into manager.product(price, name, description, image, idCategory)
                            values (${product.price}, '${product.name}', '${product.description}',
-                                   'abc.jpg')`, (err) => {
+                                   'abc.jpg' , ${product.idCategory})`, (err) => {
                 if (err) {
                     reject(err)
                 } else {

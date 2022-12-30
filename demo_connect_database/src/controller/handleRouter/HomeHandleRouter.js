@@ -1,7 +1,8 @@
 const fs = require('fs');
 const productService = require('../../service/productService');
+const categoryService = require('../../service/categoryService');
 const qs = require('qs');
-const {raw} = require("mysql");
+const cookie = require("cookie");
 
 class HomeHandleRouter {
     static getHomeHtml(homeHtml, products) {
@@ -12,6 +13,7 @@ class HomeHandleRouter {
                     <td>${index + 1}</td>
                     <td>${product.name}</td>
                     <td>${product.price}</td>
+                    <td>${product.nameCategory}</td>
                     <td><button style="background-color: green; color: white">Sua</button></td>
                     <td><a href="/delete/${product.id}"><button style="background-color: red; color: white">Xoa</button></a></td>
                 </tr>
@@ -22,6 +24,9 @@ class HomeHandleRouter {
     }
 
     showHome(req, res) {
+        const cookies = cookie.parse(req.headers.cookie || '');
+        let userCurrent = JSON.parse(cookies.user);
+        console.log(userCurrent.id)
         fs.readFile('./views/home.html', 'utf-8', async (err, homeHtml) => {
             if (err) {
                 console.log(err.message)
@@ -42,6 +47,15 @@ class HomeHandleRouter {
                     console.log(err.message)
                 } else {
                     res.writeHead(200, 'text/html');
+                    let categories = await categoryService.findAll();
+                    let options = ''
+                    categories.map(category => {
+                        options += `
+                        <option value=${category.idCategory}>${category.nameCategory}</option>
+                        `
+                    })
+                    createHtml = createHtml.replace('{categories}', options)
+                    console.log(categories)
                     res.write(createHtml);
                     res.end();
                 }
@@ -56,6 +70,7 @@ class HomeHandleRouter {
                     console.log(err)
                 } else {
                     const product = qs.parse(data);
+                    console.log(product)
                     const mess = await productService.save(product);
                     console.log(mess)
                     res.writeHead(301, {'location': '/home'});
