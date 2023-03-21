@@ -46,5 +46,16 @@ const server = http.createServer((req, res) => {
     //     res.end()
     // })
 });
-server.listen(3000);
 
+fs.readFile('linh.txt', 'utf-8',(err, data) => {
+    console.log(data)
+})
+
+// const stream = fs.createReadStream(`linh.txt`);
+// let data = ''
+// stream.on('data', (chunk) => {
+//     data += chunk;
+// })
+// stream.on('end', () => {
+//     console.log(data)
+// })
